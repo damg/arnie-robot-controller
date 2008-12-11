@@ -4,6 +4,9 @@ if ARGUMENTS.get("release", 0) == True:
 else:
     env.Append(CFLAGS=Split("-g -ggdb -pg -Wall -Wextra"))
 
+env.Append(CPPPATH=Split("#/include"))
+env.Append(LIBPATH=Split("#/lib"))
+
 Export("env")
 
 subdirs=Split("src")
