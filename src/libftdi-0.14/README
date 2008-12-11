@@ -1,0 +1,26 @@
+-------------------------------------------------------------------
+libftdi version 0.14
+-------------------------------------------------------------------
+
+libftdi - A library (using libusb) to talk to FTDI's FT2232C,
+FT232BM and FT245BM type chips including the popular bitbang mode.
+
+The AUTHORS file contains a list of all the people
+that made libftdi possible what it is today.
+
+Changes
+-------
+* Fixed flow control code for second FT2232 interface (Marek Vavruša)
+* Ability to set flow control via one USB call (Marek Vavruša)
+* 64 bit build support in the RPM spec file (Uwe Bonnes)
+* Small fix to the RPM spec file (Uwe Bonnes)
+* Ability to set RS232 break type (Intra2net)
+* Grouped flow control and modem status code together (Intra2net)
+
+
+You'll find the newest version of libftdi at:
+http://www.intra2net.com/de/produkte/opensource/ftdi/
+
+-------------------------------------------------------------------
+www.intra2net.com                            2003-2008 Intra2net AG
+-------------------------------------------------------------------
