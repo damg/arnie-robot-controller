@@ -1,4 +1,4 @@
-env=Environment()
+Import("env")
 
 source=Split("instruction_packet.c status_packet.c")
 headers=Split("instruction_packet.h status_packet.h")
