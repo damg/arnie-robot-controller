@@ -1,7 +1,7 @@
 Import("env")
 
-source=Split("instruction_packet.c status_packet.c")
-headers=Split("instruction_packet.h status_packet.h")
+source=Split("instruction_packet.c status_packet.c errno.c")
+headers=Split("instruction_packet.h status_packet.h errno.h")
 target="#/lib/serial_interface"
 
 env.Install(source=headers, target="#/include/serial_interface")
