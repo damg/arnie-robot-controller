@@ -1,5 +1,7 @@
 #include "status_packet.h"
 
+#include <assert.h>
+
 ar_io_status_packet_t*
 ar_io_status_packet_init(const unsigned char* data)
 {

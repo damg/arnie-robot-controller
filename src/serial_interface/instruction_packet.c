@@ -23,6 +23,9 @@ ar_io_instruction_packet_init(unsigned char id,
   else
     {
       p->params = malloc(sizeof(unsigned char) * p->param_count);
+      int i;
+      for(i = 0; i < param_count; ++i)
+	p->params[i] = params[i];
     }
 
   return p;
