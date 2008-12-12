@@ -81,10 +81,6 @@ int ar_io_write_instruction_packet(struct ftdi_context *ftdic,
 int ar_io_read_status_packet(struct ftdi_context *ftdic,
 			     struct ar_io_status_packet *p)
 {
-  
-  assert(p != NULL);
-  assert(p->params == NULL);
-
   int rc;
   unsigned char hdr[4]; // header buf
   
@@ -125,7 +121,8 @@ int ar_io_read_status_packet(struct ftdi_context *ftdic,
   p->error = tl[0];
   
   // copy params
-  p->params = malloc(sizeof(unsigned char) * p->param_count);
+  p->params = realloc(p->params, sizeof(unsigned char) * p->param_count);
+
   unsigned char i;
   for(i = 0; i < hdr[3] - 2; ++i)
     p->params[i] = tl[i+1];
