@@ -1,6 +1,6 @@
 Import("env")
 
-env=env.Clone(LIBS=Split("ftdi usb"))
+env=env.Clone(LIBS=Split("serial_interface ftdi usb"))
 
 source=Split("main.c")
 target="#/bin/arnie"
