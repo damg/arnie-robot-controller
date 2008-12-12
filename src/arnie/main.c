@@ -36,6 +36,8 @@ int main()
 	  printf("ERROR: %s\n", ar_io_errstring(ar_io_errno));
 	  continue;
 	}
+
+      printf("PONG\n");
     }
 
   rc = ar_io_close(&ftdic);
