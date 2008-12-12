@@ -42,7 +42,7 @@ ar_io_instruction_packet_free(ar_io_instruction_packet_t* p)
 }
 
 unsigned char*
-ar_io_instruction_packet_to_bytes(ar_io_instruction_packet_t* p)
+ar_io_instruction_packet_to_bytes(const ar_io_instruction_packet_t* p)
 {
   assert(p != NULL);
 

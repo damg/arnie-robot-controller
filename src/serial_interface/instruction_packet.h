@@ -40,6 +40,6 @@ ar_io_instruction_packet_free(ar_io_instruction_packet_t* p);
  * \return Pointer auf ein auf dem Heap allozierten Byte-Vektor
  */
 unsigned char*
-ar_io_instruction_packet_to_bytes(ar_io_instruction_packet_t* p);
+ar_io_instruction_packet_to_bytes(const ar_io_instruction_packet_t* p);
 
 #endif
