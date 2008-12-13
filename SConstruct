@@ -1,4 +1,4 @@
-env=Environment()
+env=Environment(tools=Split("default doxygen"), toolpath = ".")
 if ARGUMENTS.get("release", 0) == True:
     env.Append(CFLAGS=Split("-O2 -fomit-frame-pointer -ffast-math"))
 else:
@@ -13,3 +13,5 @@ subdirs=Split("src")
 
 for e in subdirs:
     env.SConscript("%s/SConscript" % e)
+
+env.Doxygen("Doxyfile")
