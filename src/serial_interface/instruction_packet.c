@@ -1,3 +1,6 @@
+/**\addtogroup serial_interface */
+/*@{*/
+
 #include "instruction_packet.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -62,3 +65,5 @@ ar_io_instruction_packet_to_bytes(const ar_io_instruction_packet_t* p)
   r[len-1] = ~r[len-1];
   return r;
 }
+
+/*@}*/

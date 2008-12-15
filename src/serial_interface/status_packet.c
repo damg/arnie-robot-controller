@@ -1,3 +1,6 @@
+/** \addtogroup serial_interface */
+/*@{*/
+
 #include "status_packet.h"
 
 #include <assert.h>
@@ -5,6 +8,8 @@
 ar_io_status_packet_t*
 ar_io_status_packet_init(const unsigned char* data)
 {
+  assert(data != NULL);
+
   if (data[0] != 0xFF || data[1] != 0xFF)
     return NULL;
 
@@ -37,3 +42,5 @@ ar_io_status_packet_free(ar_io_status_packet_t *p)
       free(p);
     }
 }
+
+/*@}*/

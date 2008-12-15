@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 /**
-    \mainpage libftdi API documentation
+    \page libftdi libftdi API documentation
 
     Library to talk to FTDI chips. You find the latest versions of libftdi at
     http://www.intra2net.com/de/produkte/opensource/ftdi/

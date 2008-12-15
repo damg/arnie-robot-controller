@@ -1,5 +1,9 @@
 #include "errno.h"
 
+/** \addtogroup serial_interface */
+/*@{*/
+
+/// global var holding error number of the last operation
 AR_IO_ERRNO_T ar_io_errno;
 
 const char* ar_io_errstring(AR_IO_ERRNO_T e)
@@ -30,3 +34,5 @@ const char* ar_io_errstring(AR_IO_ERRNO_T e)
       return "Unknown IO error";
     }
 }
+
+/*@}*/

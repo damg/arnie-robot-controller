@@ -1,3 +1,9 @@
+/**
+   \addtogroup serial_interface
+*/
+
+/*@{*/
+
 #include "connection.h"
 
 #include <assert.h>
@@ -129,3 +135,5 @@ int ar_io_read_status_packet(struct ftdi_context *ftdic,
 
   return 0;
 }
+
+/*@}*/
