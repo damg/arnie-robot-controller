@@ -18,6 +18,7 @@
 #include <ftdi/ftdi.h>
 #include "instruction_packet.h"
 #include "status_packet.h"
+#include "control_table.h"
 
 /**
  * \brief Open a new connection on the first available port with baud
@@ -79,6 +80,20 @@ int ar_io_write_instruction_packet(struct ftdi_context *ftdic,
  */
 int ar_io_read_status_packet(struct ftdi_context *ftdic,
 			     struct ar_io_status_packet *p);
+
+
+/**
+   \brief Read the control table of a dynamixel.
+   \param id ID of the dynamixel.
+   \param ct Control table structure to write into.
+   \note ct may not be NULL.
+   \note ftdic may not be NULL.
+   \note id must not be 0xFF.
+   \return 0 on success, -1 on failure.
+*/
+int ar_io_read_control_table(struct ftdi_context *ftdic,
+			     unsigned char id,
+			     struct ar_io_control_table *ct);
 
 #endif
 

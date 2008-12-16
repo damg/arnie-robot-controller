@@ -136,4 +136,70 @@ int ar_io_read_status_packet(struct ftdi_context *ftdic,
   return 0;
 }
 
+int ar_io_read_control_table(struct ftdi_context *ftdic,
+			     unsigned char id,
+			     struct ar_io_control_table *ct)
+{
+  assert(ct != NULL);
+  assert(id != 0xFF);
+
+  struct ar_io_instruction_packet ip;
+  unsigned char read_data_params[] = { 0x03, 32 };
+  struct ar_io_status_packet sp;
+
+  ip.id = id;
+  ip.instruction = 0x02;
+  ip.params = read_data_params;
+  ip.param_count = 2;
+
+  int rc;
+  rc = ar_io_write_instruction_packet(ftdic, &ip);
+
+  if (rc == -1)
+    return -1;
+
+  rc = ar_io_read_status_packet(ftdic, &sp);
+  if (rc == -1)
+    {
+      free(sp.params);
+      return -1;
+    }
+
+  if (sp.param_count != 32)
+    {
+      free(sp.params);
+      ar_io_errno = AR_IO_EREADNODATA;
+      return -1;
+    }
+
+  ct->id = sp.params[0];
+  ct->baud_rate = sp.params[1];
+  ct->return_delay_time = sp.params[2];
+  ct->cw_angle_limit = sp.params[3] | (sp.params[4] << 8);
+  ct->ccw_angle_limit = sp.params[5] | (sp.params[6] << 8);
+  ct->highest_limit_temperature = sp.params[7];
+  ct->lowest_limit_voltage = sp.params[8];
+  ct->highest_limit_voltage = sp.params[9];
+  ct->max_torque = sp.params[10] | (sp.params[11] << 8);
+  ct->status_return_level = sp.params[12];
+  ct->alarm_led = sp.params[13];
+  ct->alarm_shutdown = sp.params[14];
+  ct->reserved = sp.params[15];
+  ct->torque_enable = sp.params[16];
+  ct->led = sp.params[17];
+  ct->cw_compliance_margin = sp.params[18];
+  ct->ccw_compliance_margin = sp.params[19];
+  ct->cw_compliance_slope = sp.params[20];
+  ct->ccw_compliance_slope = sp.params[21];
+  ct->goal_position = sp.params[22] | (sp.params[23] << 8);
+  ct->moving_speed = sp.params[24] | (sp.params[25] << 8);
+  ct->torque_limit = sp.params[26] | (sp.params[27] << 8);
+  ct->registered_instruction = sp.params[28];
+  ct->lock = sp.params[29];
+  ct->punch = sp.params[30] | (sp.params[31] << 8);
+
+  free(sp.params);
+  return 0;
+}
+
 /*@}*/
