@@ -200,4 +200,56 @@ int ar_io_read_control_table(struct ftdi_context *ftdic,
   return 0;
 }
 
+int ar_io_write_control_table(struct ftdi_context *ftdic,
+			      struct ar_io_control_table *ct)
+{
+  assert(ftdic != NULL);
+  assert(ct != NULL);
+
+  unsigned char buf[] =
+    {
+      0x03,
+      ct->id,
+      ct->baud_rate,
+      ct->return_delay_time,
+      (ct->cw_angle_limit & 0xFF00) >> 8,
+      ct->cw_angle_limit & 0x00FF,
+      (ct->ccw_angle_limit & 0xFF00) >> 8,
+      ct->ccw_angle_limit & 0x00FF,
+      ct->highest_limit_temperature,
+      ct->lowest_limit_voltage,
+      ct->highest_limit_voltage,
+      (ct->max_torque & 0xFF00) >> 8,
+      ct->max_torque & 0x00FF,
+      ct->status_return_level,
+      ct->alarm_led,
+      ct->alarm_shutdown,
+      ct->reserved,
+      ct->torque_enable,
+      ct->led,
+      ct->cw_compliance_margin,
+      ct->ccw_compliance_margin,
+      ct->cw_compliance_slope,
+      ct->ccw_compliance_slope,
+      (ct->goal_position & 0xFF00) >> 8,
+      ct->goal_position & 0x00FF,
+      (ct->moving_speed & 0xFF00) >> 8,
+      ct->moving_speed & 0x00FF,
+      (ct->torque_limit & 0xFF00) >> 8,
+      ct->torque_limit & 0x00FF,
+      ct->registered_instruction,
+      ct->lock,
+      (ct->punch & 0xFF00) >> 8,
+      ct->punch & 0x00FF
+    };
+
+  struct ar_io_instruction_packet ip;
+  ip.id = ct->id;
+  ip.instruction = 0x03;
+  ip.params = buf;
+  ip.param_count = 33;
+
+  return ar_io_write_instruction_packet(ftdic, &ip);
+}
+
 /*@}*/

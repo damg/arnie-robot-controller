@@ -84,6 +84,7 @@ int ar_io_read_status_packet(struct ftdi_context *ftdic,
 
 /**
    \brief Read the control table of a dynamixel.
+   \param ftdic FTDI context to use.
    \param id ID of the dynamixel.
    \param ct Control table structure to write into.
    \note ct may not be NULL.
@@ -94,6 +95,17 @@ int ar_io_read_status_packet(struct ftdi_context *ftdic,
 int ar_io_read_control_table(struct ftdi_context *ftdic,
 			     unsigned char id,
 			     struct ar_io_control_table *ct);
+
+/**
+   \brief Write control table to a dynamixel.
+   \param ftdic FTDI context to use.
+   \param ct Control table to write.
+   \note ftdic may not be NULL.
+   \note ct may not be NULL.
+   \return 0 on success, -1 on failure.
+*/
+int ar_io_write_control_table(struct ftdi_context *ftdic,
+			      struct ar_io_control_table *ct);
 
 #endif
 
