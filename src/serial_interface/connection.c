@@ -146,6 +146,7 @@ int ar_io_read_control_table(struct ftdi_context *ftdic,
   struct ar_io_instruction_packet ip;
   unsigned char read_data_params[] = { 0x03, 32 };
   struct ar_io_status_packet sp;
+  sp.params = NULL;
 
   ip.id = id;
   ip.instruction = 0x02;
@@ -160,10 +161,7 @@ int ar_io_read_control_table(struct ftdi_context *ftdic,
 
   rc = ar_io_read_status_packet(ftdic, &sp);
   if (rc == -1)
-    {
-      free(sp.params);
       return -1;
-    }
 
   if (sp.param_count != 32)
     {
