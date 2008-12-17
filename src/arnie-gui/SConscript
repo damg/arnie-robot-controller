@@ -1,0 +1,10 @@
+Import("env")
+
+env=env.Clone(LIBS=Split("serial_interface usb ftdi"))
+env.ParseConfig("pkg-config --libs --cflags gtk+-2.0 libglade-2.0")
+
+source=Split("main.c")
+target="#/bin/arnie-gui"
+
+env.Program(source=source, target=target)
+env.Install(source=Split("gui.glade arnie-black-medium.jpg"), target="#/share/arnie-gui/")
