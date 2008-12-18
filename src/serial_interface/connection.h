@@ -95,12 +95,37 @@ int ar_io_read_status_packet(struct ftdi_context *ftdic,
 int ar_io_read_control_table(struct ftdi_context *ftdic,
 			     unsigned char id,
 			     struct ar_io_control_table *ct);
+/**
+   \brief Set the goal position of a dynamixel.
+   \param ftdic FTDI context to use.
+   \param id ID of the dynamixel.
 
+   \param sp Status packet to write status information into.
+
+   \return 0 on success, -1 on failure.
+   \note ftdic may not be NULL.
+   \note sp may not be NULL.
+   \note Only IO errors are reported via return code. Logical
+   operation errors must be checked by using sp->error.
+*/
 int ar_io_set_goal_position(struct ftdi_context *ftdic,
 			    unsigned char id,
 			    unsigned short goal_position,
 			    struct ar_io_status_packet *sp);
 
+/**
+   \brief Set the moving speed of a dynamixel.
+   \param ftdic FTDI context to use.
+   \param id ID of the dynamixel.
+
+   \param sp Status packet to write status information into. 
+
+   \return 0 on success, -1 on failure.
+   \note ftdic may not be NULL.
+   \note sp may not be NULL.
+   \note Only IO errors are reported via return code. Logical
+   operation errors must be checked by using sp->error.
+*/
 int ar_io_set_moving_speed(struct ftdi_context *ftdic,
 			    unsigned char id,
 			    unsigned short moving_speed,
