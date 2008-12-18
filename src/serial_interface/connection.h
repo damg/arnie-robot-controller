@@ -84,6 +84,7 @@ int ar_io_read_status_packet(struct ftdi_context *ftdic,
 
 /**
    \brief Read the control table of a dynamixel.
+   \param ftdic FTDI context to use.
    \param id ID of the dynamixel.
    \param ct Control table structure to write into.
    \note ct may not be NULL.
@@ -94,6 +95,16 @@ int ar_io_read_status_packet(struct ftdi_context *ftdic,
 int ar_io_read_control_table(struct ftdi_context *ftdic,
 			     unsigned char id,
 			     struct ar_io_control_table *ct);
+
+int ar_io_set_goal_position(struct ftdi_context *ftdic,
+			    unsigned char id,
+			    unsigned short goal_position,
+			    struct ar_io_status_packet *sp);
+
+int ar_io_set_moving_speed(struct ftdi_context *ftdic,
+			    unsigned char id,
+			    unsigned short moving_speed,
+			    struct ar_io_status_packet *sp);
 
 #endif
 
