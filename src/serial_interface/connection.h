@@ -96,16 +96,15 @@ int ar_io_read_control_table(struct ftdi_context *ftdic,
 			     unsigned char id,
 			     struct ar_io_control_table *ct);
 
-/**
-   \brief Write control table to a dynamixel.
-   \param ftdic FTDI context to use.
-   \param ct Control table to write.
-   \note ftdic may not be NULL.
-   \note ct may not be NULL.
-   \return 0 on success, -1 on failure.
-*/
-int ar_io_write_control_table(struct ftdi_context *ftdic,
-			      struct ar_io_control_table *ct);
+int ar_io_set_goal_position(struct ftdi_context *ftdic,
+			    unsigned char id,
+			    unsigned short goal_position,
+			    struct ar_io_status_packet *sp);
+
+int ar_io_set_moving_speed(struct ftdi_context *ftdic,
+			    unsigned char id,
+			    unsigned short moving_speed,
+			    struct ar_io_status_packet *sp);
 
 #endif
 
