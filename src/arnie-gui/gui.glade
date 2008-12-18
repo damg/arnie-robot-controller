@@ -320,7 +320,7 @@
             <property name="height_request">30</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="adjustment">2 0 100 1 10 10</property>
+            <property name="adjustment">511 0 1023 1 10 10</property>
             <property name="draw_value">False</property>
             <signal name="value_changed" handler="on_hscale_right_foot_xz_value_changed"/>
           </widget>
