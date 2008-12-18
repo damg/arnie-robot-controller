@@ -5,78 +5,202 @@
 #include <serial_interface/control_table.h>
 #include <assert.h>
 
+
+#define HEAD_ID 16
+#define TORSO_XY_ID 17
+#define TORSO_XZ_ID 18
+#define LEFT_SHOULDER_XZ_ID 48
+#define RIGHT_SHOULDER_XZ_ID 32
+#define LEFT_SHOULDER_XY_ID 49
+#define RIGHT_SHOULDER_XY_ID 33
+#define LEFT_SHOULDER_YZ_ID 50
+#define RIGHT_SHOULDER_YZ_ID 34
+#define LEFT_ELBOW_XZ_ID 51
+#define RIGHT_ELBOW_XZ_ID 35
+#define LEFT_HIP_YZ_ID 80
+#define RIGHT_HIP_YZ_ID 64
+#define LEFT_HIP_XY_ID 81
+#define RIGHT_HIP_XY_ID 65
+#define LEFT_HIP_XZ_ID 82
+#define RIGHT_HIP_XZ_ID 66
+#define LEFT_KNEE_XZ_ID 83
+#define RIGHT_KNEE_XZ_ID 67
+#define LEFT_FOOT_XZ_ID 84
+#define RIGHT_FOOT_XZ_ID 68
+#define LEFT_FOOT_YZ_ID 85
+#define RIGHT_FOOT_YZ_ID 69
+
+#define ROT_SPEED 50
+
 const double ANGLE_CONVERSION_FACTOR = 360.0/0x3FF;
 struct ftdi_context ftdic;
-unsigned short speed = 2;
 
-void quit(GtkRange *range, gpointer user_data)
+void quit(__attribute__((unused)) GtkWidget *widget, __attribute__((unused)) gpointer user_data)
 {
   ar_io_close(&ftdic);
   gtk_main_quit();
 }
 
-void on_hscale_head_value_changed(GtkRange *range, gpointer user_data) 
+void on_hscale_head_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
 {
-  struct ar_io_instruction_packet ip;
-  struct ar_io_status_packet sp;
-  int rc;
-  double val = gtk_range_get_value(range);
-
-  unsigned char params[] = 
-    { 
-      0x1E,
-      (((unsigned char) val) & 0xFF00) >> 8,
-      (((unsigned char) val) & 0x00FF),
-      0x00,
-      0x02
-    };
-
-  ip.id = 16;
-  ip.instruction = 0x03;
-  ip.params = params;
-  ip.param_count = 5;
-
-  rc = ar_io_write_instruction_packet(&ftdic, &ip);
-  if (rc == -1)
-    {
-      fprintf(stderr, "Error writing instruction packet: %s\n",
-	      ar_io_errstring(ar_io_errno));
-      return;
-    }
-
-  sp.params = NULL;
-  rc = ar_io_read_status_packet(&ftdic, &sp);
-  if (rc == -1)
-    {
-      fprintf(stderr, "Error reading status packet: %s\n",
-	      ar_io_errstring(ar_io_errno));
-      return;
-    }
-
-  fprintf(stderr, "Data sent: %f, RC: %i\n", val, sp.error);
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, HEAD_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, HEAD_ID, val, &sp);
 }
-void on_hscale_torso_xy_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_torso_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_shoulder_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_shoulder_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_shoulder_xy_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_shoulder_xy_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_shoulder_yz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_shoulder_yz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_elbow_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_elbow_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_hip_yz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_hip_yz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_hip_xy_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_hip_xy_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_hip_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_hip_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_knee_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_knee_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_foot_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_foot_xz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_left_foot_yz_value_changed(GtkRange *range, gpointer user_data) {}
-void on_hscale_right_foot_yz_value_changed(GtkRange *range, gpointer user_data) {}
+void on_hscale_torso_xy_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, TORSO_XY_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, TORSO_XY_ID, val, &sp);
+}
+void on_hscale_torso_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, TORSO_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, TORSO_XZ_ID, val, &sp);
+}
+void on_hscale_left_shoulder_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_SHOULDER_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_SHOULDER_XZ_ID, val, &sp);
+}
+void on_hscale_right_shoulder_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_SHOULDER_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_SHOULDER_XZ_ID, val, &sp);
+}
+void on_hscale_left_shoulder_xy_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_SHOULDER_XY_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_SHOULDER_XY_ID, val, &sp);
+}
+void on_hscale_right_shoulder_xy_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_SHOULDER_XY_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_SHOULDER_XY_ID, val, &sp);
+}
+void on_hscale_left_shoulder_yz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_SHOULDER_YZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_SHOULDER_YZ_ID, val, &sp);
+}
+void on_hscale_right_shoulder_yz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_SHOULDER_YZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_SHOULDER_YZ_ID, val, &sp);
+}
+void on_hscale_left_elbow_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_ELBOW_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_ELBOW_XZ_ID, val, &sp);
+}
+void on_hscale_right_elbow_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_ELBOW_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_ELBOW_XZ_ID, val, &sp);
+}
+void on_hscale_left_hip_yz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_HIP_YZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_HIP_YZ_ID, val, &sp);
+}
+void on_hscale_right_hip_yz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data)
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_HIP_YZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_HIP_YZ_ID, val, &sp);
+}
+void on_hscale_left_hip_xy_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_HIP_XY_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_HIP_XY_ID, val, &sp);
+}
+void on_hscale_right_hip_xy_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_HIP_XY_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_HIP_XY_ID, val, &sp);
+}
+void on_hscale_left_hip_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_HIP_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_HIP_XZ_ID, val, &sp);
+}
+void on_hscale_right_hip_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_HIP_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_HIP_XZ_ID, val, &sp);
+}
+void on_hscale_left_knee_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_KNEE_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_KNEE_XZ_ID, val, &sp);
+}
+void on_hscale_right_knee_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_KNEE_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_KNEE_XZ_ID, val, &sp);
+}
+void on_hscale_left_foot_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_FOOT_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_FOOT_XZ_ID, val, &sp);
+}
+void on_hscale_right_foot_xz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) {
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_FOOT_XZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_FOOT_XZ_ID, val, &sp);
+}
+void on_hscale_left_foot_yz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, LEFT_FOOT_YZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, LEFT_FOOT_YZ_ID, val, &sp);
+}
+void on_hscale_right_foot_yz_value_changed(GtkRange *range, __attribute__((unused)) gpointer user_data) 
+{
+  unsigned short val = (unsigned short) gtk_range_get_value(range);
+  struct ar_io_status_packet sp = { 0,0,0,0 };
+  ar_io_set_moving_speed(&ftdic, RIGHT_FOOT_YZ_ID, ROT_SPEED, &sp);
+  ar_io_set_goal_position(&ftdic, RIGHT_FOOT_YZ_ID, val, &sp);
+}
 
 unsigned char angle_to_goal_pos(double angle)
 {
@@ -143,15 +267,6 @@ int main(int argc, char **argv)
   hscale_right_foot_xz = glade_xml_get_widget(xml, "hscale_right_foot_xz");
   hscale_left_foot_yz = glade_xml_get_widget(xml, "hscale_left_foot_yz");
   hscale_right_foot_yz = glade_xml_get_widget(xml, "hscale_right_foot_yz");
-
-  unsigned char ids[] =
-    { 
-      16,17,18,32,33,34,35,48,49,50,51,64,65,66,67,68,69,80,81,82,83,84,85
-    };
-  GtkWidget *hscales[] =
-    {
-      hscale_head,hscale_torso_xy,hscale_torso_xz,hscale_left_shoulder_xz,hscale_right_shoulder_xz,hscale_left_shoulder_xy,hscale_right_shoulder_xy,hscale_left_shoulder_yz,hscale_right_shoulder_yz,hscale_left_elbow_xz,hscale_right_elbow_xz,hscale_left_hip_yz,hscale_right_hip_yz,hscale_left_hip_xy,hscale_right_hip_xy,hscale_left_hip_xz,hscale_right_hip_xz,hscale_left_knee_xz,hscale_right_knee_xz,hscale_left_foot_xz,hscale_right_foot_xz,hscale_left_foot_yz,hscale_right_foot_yz
-    };
 
   gtk_widget_show(wnd_main);
 
