@@ -1,6 +1,6 @@
 Import("env")
 
-subdirs=Split("libftdi-0.14 serial_interface arnie")
+subdirs=Split("libftdi-0.14 serial_interface")
 
 for e in subdirs:
     env.SConscript("%s/SConscript" % e)
