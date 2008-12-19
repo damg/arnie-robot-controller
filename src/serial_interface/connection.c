@@ -185,21 +185,57 @@ int ar_io_set_moving_speed(struct ftdi_context *ftdic,
 			   unsigned short moving_speed,
 			   struct ar_io_status_packet *sp)
 {
-  assert(ftdic != NULL);
-  assert(sp != NULL);
-  assert(id < 0xFE);
   assert(moving_speed <= 0x03FF);
+  unsigned char buf[] =
+    {
+      moving_speed & 0x00FF, (moving_speed & 0xFF00) >> 8
+    };
+  return ar_io_write_memory(ftdic, id, 0x20, buf, 2, sp);
+}
 
-  unsigned char moving_speed_lo = moving_speed & 0x00FF,
-    moving_speed_hi = (moving_speed & 0xFF00) >> 8;
+int ar_io_set_goal_position(struct ftdi_context *ftdic,
+			   unsigned char id,
+			   unsigned short goal_position,
+			   struct ar_io_status_packet *sp)
+{
+  assert(goal_position <= 0x03FF);
+  unsigned char buf[] =
+    { 
+      goal_position & 0x00FF, (goal_position & 0xFF00) >> 8
+    };
 
-  int rc;
+  return ar_io_write_memory(ftdic, id, 0x1E, buf, 2, sp);
+}
+
+int ar_io_write_memory(struct ftdi_context *ftdic,
+		       unsigned char id,
+		       unsigned char address,
+		       unsigned char *bytes,
+		       unsigned char byte_count,
+		       struct ar_io_status_packet *sp)
+{
+  assert(ftdic != NULL);
+  assert(id < 0xFE);
+  assert(byte_count != 0 && bytes != NULL);
+  assert(sp != NULL);
+  assert((address >= 0x03 && address <= 0x09) ||
+	 (address >= 0x0B && address <= 0x12) ||
+	 (address >= 0x18 && address <= 0x23) ||
+	 (address == 0x2C) ||
+	 (address >= 0x2F && address <= 0x31));
+
+  unsigned char params[byte_count + 1];
+  params[0] = address;
+
+  memcpy(params+1, bytes, byte_count);
+
   struct ar_io_instruction_packet ip;
-  unsigned char params[] = { 0x20, moving_speed_lo, moving_speed_hi };
   ip.id = id;
   ip.instruction = 0x03;
   ip.params = params;
-  ip.param_count = 3;
+  ip.param_count = byte_count + 1;
+
+  int rc;
   rc = ar_io_write_instruction_packet(ftdic, &ip);
   if (rc == -1)
     return -1;
@@ -208,32 +244,24 @@ int ar_io_set_moving_speed(struct ftdi_context *ftdic,
   return rc;
 }
 
-int ar_io_set_goal_position(struct ftdi_context *ftdic,
+int ar_io_set_torque_limit(struct ftdi_context *ftdic,
 			   unsigned char id,
-			   unsigned short goal_position,
+			   unsigned short torque_limit,
 			   struct ar_io_status_packet *sp)
 {
-  assert(ftdic != NULL);
-  assert(sp != NULL);
-  assert(id < 0xFE);
-  assert(goal_position <= 0x03FF);
+  assert(torque_limit < 0xFE);
+  unsigned char buf[] = { torque_limit & 0x00FF,
+			  (torque_limit & 0xFF00) >> 8 };
+  return ar_io_write_memory(ftdic, id, 0x22, buf, 2, sp);
+}
 
-  unsigned char goal_position_lo = goal_position & 0x00FF,
-    goal_position_hi = (goal_position & 0xFF00) >> 8;
-
-  int rc;
-  struct ar_io_instruction_packet ip; 
-  unsigned char params[] = { 0x1E, goal_position_lo, goal_position_hi };
-  ip.id = id;
-  ip.instruction = 0x03;
-  ip.params = params;
-  ip.param_count = 3;
-  rc = ar_io_write_instruction_packet(ftdic, &ip);
-  if (rc == -1)
-    return -1;
-
-  rc = ar_io_read_status_packet(ftdic, sp);
-  return rc;
+int ar_io_set_torque_enable(struct ftdi_context *ftdic,
+			    unsigned char id,
+			    bool torque_enable,
+			    struct ar_io_status_packet *sp)
+{
+  unsigned char buf = torque_enable ? 1 : 0;
+  return ar_io_write_memory(ftdic, id, 0x18, &buf, 1, sp);
 }
 
 /*@}*/
