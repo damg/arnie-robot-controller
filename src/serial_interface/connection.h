@@ -19,6 +19,7 @@
 #include "instruction_packet.h"
 #include "status_packet.h"
 #include "control_table.h"
+#include <stdbool.h>
 
 /**
  * \brief Open a new connection on the first available port with baud
@@ -96,14 +97,106 @@ int ar_io_read_control_table(struct ftdi_context *ftdic,
 			     unsigned char id,
 			     struct ar_io_control_table *ct);
 
+/**
+   \brief Write data to dynamixel memory.
+   \param ftdic FTDI context to use.
+   \param id ID of the target dynamixel.
+   \param address Address to write to.
+   \param bytes Data to write.
+   \param byte_count Length of bytes.
+   \param sp Status packet to write status information to.
+   \return 0 on success, -1 on write-read failure.
+   \note ftdic may not be NULL.
+   \note id must be in range [0..0xFD]
+   \note bytes may not be NULL, byte_count may not be 0.
+   \note sp may not be NULL.
+
+   \note Information about success of the logical operation (write) is
+   reported via ct->error
+*/
+int ar_io_write_memory(struct ftdi_context *ftdic,
+		       unsigned char id,
+		       unsigned char address,
+		       unsigned char *bytes,
+		       unsigned char byte_count,
+		       struct ar_io_status_packet *sp);
+
+/**
+   \brief Set goal position of a dynamixel.
+   \param ftdic FTDI context to use.
+   \param id ID of the dynamixel.
+   \param goal_position Goal position to set.
+   \param sp Status packet to write status information into.
+
+   \return 0 on success, -1 on failure.
+   \note ftdic may not be NULL.
+   \note sp may not be NULL.
+   \note goal_position must be in [0..0x3FF] range.
+   \note Only IO errors are reported via return code. Logical
+   operation errors must be checked by using sp->error.
+*/
 int ar_io_set_goal_position(struct ftdi_context *ftdic,
 			    unsigned char id,
 			    unsigned short goal_position,
 			    struct ar_io_status_packet *sp);
 
+/**
+   \brief Set moving speed of a dynamixel.
+   \param ftdic FTDI context to use.
+   \param id ID of the dynamixel.
+   \param moving_speed Moving speed value to set.
+   \param sp Status packet to write status information into. 
+
+   \return 0 on success, -1 on failure.
+   \note ftdic may not be NULL.
+   \note sp may not be NULL.
+   \note moving_speed must be in [0..0x3FF] range.
+   \note Only IO errors are reported via return code. Logical
+   operation errors must be checked by using sp->error.
+*/
 int ar_io_set_moving_speed(struct ftdi_context *ftdic,
+			   unsigned char id,
+			   unsigned short moving_speed,
+			   struct ar_io_status_packet *sp);
+
+/**
+   \brief Set torque limit of a dynamixel.
+   \param ftdic FTDI context to use.
+   \param id ID of the dynamixel.
+   \param torque_limit Torque limit to set.
+   \param sp Status packet to write status information into.
+   \return 0 on success, -1 on failure.
+   \note ftdic may not be NULL.
+   \note id must be in [0..0xFB] range.
+   \note torque_limit must be in [0..0x3FF] range.
+   \note sp may not be NULL.
+
+   \note Only IO errors are reported via return code. Logical
+   operation errors must be checked by using sp->error.
+*/
+int ar_io_set_torque_limit(struct ftdi_context *ftdic,
+			   unsigned char id,
+			   unsigned short torque_limit,
+			   struct ar_io_status_packet *sp);
+
+/**
+   \brief Set whether torque is enabled.
+   \param ftdic FTDI context to use.
+   \param id ID of the dynamixel.
+   \param torque_enable Whether torque should be enabled.
+   \sp Status packet to wrute status information into.
+   \return 0 on success, -1 on failure.
+
+   \note ftdic may not be NULL.
+   \note id must be in [0..0xFB] range.
+   \note sp may not be NULL.
+
+   \note Only IO errors are reported via return code. Logical
+   operation errors must be checked by using sp->error.
+*/
+int ar_io_set_torque_enable(struct ftdi_context *ftdic,
 			    unsigned char id,
-			    unsigned short moving_speed,
+			    bool torque_enable,
 			    struct ar_io_status_packet *sp);
 
 #endif
