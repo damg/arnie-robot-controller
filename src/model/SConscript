@@ -1,0 +1,9 @@
+Import("env")
+
+source=Split("model.c gsl_vector_helpers.c ccd.c")
+headers=Split("model.h gsl_vector_helpers.h ccd.h")
+target="#/lib/robot_model"
+
+env.Install(source=headers, target="#/include/robot_model")
+env.Library(source=source, target=target)
+
