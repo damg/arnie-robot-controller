@@ -79,6 +79,8 @@
 #define AR_M_DH_ll_j7_d  0.0
 #define AR_M_DH_ll_j7_alpha  0.0
 #define AR_M_DH_ll_j7_theta_off  M_PI_2
+#define AR_M_DH_ll_j7_theta_min AR_M_DH_ll_j7_theta_off
+#define AR_M_DH_ll_j7_theta_max AR_M_DH_ll_j7_theta_off
 
 // Right foot
 // Join 1
@@ -158,6 +160,8 @@
 #define AR_M_DH_rl_j7_d  0.0
 #define AR_M_DH_rl_j7_alpha  0.0
 #define AR_M_DH_rl_j7_theta_off  M_PI_2
+#define AR_M_DH_rl_j7_theta_min AR_M_DH_rl_j7_theta_off
+#define AR_M_DH_rl_j7_theta_max AR_M_DH_rl_j7_theta_off
 
 // Mass properties of the torso
 #define AR_M_TOP_com_x  -5.5616935
