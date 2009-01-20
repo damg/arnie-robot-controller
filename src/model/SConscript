@@ -6,4 +6,3 @@ target="#/lib/robot_model"
 
 env.Install(source=headers, target="#/include/robot_model")
 env.Library(source=source, target=target)
-
