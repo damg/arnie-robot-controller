@@ -1,6 +1,8 @@
 #ifndef __AR_M_ARNIE_H__
 #define __AR_M_ARNIE_H__
 
+#include "model.h"
+
 struct ar_m_limb ar_m_ll_j1;
 struct ar_m_limb ar_m_ll_j2;
 struct ar_m_limb ar_m_ll_j3;
